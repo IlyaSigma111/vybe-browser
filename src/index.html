@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src * data:; connect-src *; frame-src *;">
-  <title>Vybe</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src * data: https:; connect-src *; frame-src *;">
+  <title>vybe</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -29,18 +29,12 @@
     </div>
   </div>
 
-  <!-- Tabs -->
-  <div id="tabbar">
-    <div id="tabs"></div>
-    <button id="btn-new-tab">+</button>
-  </div>
-
   <!-- Navbar -->
   <div id="navbar">
-    <button class="nav-btn" id="btn-back" title="Back (H)">
+    <button class="nav-btn" id="btn-back" title="Back (H / Alt+←)">
       <svg width="16" height="16" viewBox="0 0 16 16"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
     </button>
-    <button class="nav-btn" id="btn-forward" title="Forward (L)">
+    <button class="nav-btn" id="btn-forward" title="Forward (L / Alt+→)">
       <svg width="16" height="16" viewBox="0 0 16 16"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
     </button>
     <button class="nav-btn" id="btn-reload" title="Reload (r)">
@@ -51,6 +45,9 @@
       <input id="url-bar" type="text" placeholder="Type URL or search..." autocomplete="off" spellcheck="false">
     </div>
   </div>
+
+  <!-- Bookmarks bar -->
+  <div id="bookmarks-bar"></div>
 
   <!-- Command palette -->
   <div id="command-overlay" class="hidden">
@@ -73,37 +70,42 @@
       <div id="help-content">
         <div class="help-section">
           <h3>Navigation</h3>
-          <div class="help-row"><kbd>o</kbd> <span>Open URL / search</span></div>
-          <div class="help-row"><kbd>O</kbd> <span>Open URL in new tab</span></div>
+          <div class="help-row"><kbd>o</kbd> <span>Open URL</span></div>
           <div class="help-row"><kbd>h</kbd> <span>Go back</span></div>
           <div class="help-row"><kbd>l</kbd> <span>Go forward</span></div>
-          <div class="help-row"><kbd>r</kbd> <span>Reload page</span></div>
+          <div class="help-row"><kbd>r</kbd> <span>Reload</span></div>
+          <div class="help-row"><kbd>Ctrl+l</kbd> <span>Focus URL bar</span></div>
+          <div class="help-row"><kbd>Ctrl+w</kbd> <span>Stop loading</span></div>
         </div>
         <div class="help-section">
-          <h3>Tabs</h3>
-          <div class="help-row"><kbd>t</kbd> <span>New tab</span></div>
-          <div class="help-row"><kbd>q</kbd> <span>Close tab</span></div>
-          <div class="help-row"><kbd>J</kbd> <span>Next tab</span></div>
-          <div class="help-row"><kbd>K</kbd> <span>Previous tab</span></div>
-          <div class="help-row"><kbd>1-9</kbd> <span>Go to tab N</span></div>
-        </div>
-        <div class="help-section">
-          <h3>Scrolling</h3>
+          <h3>Scroll & Zoom</h3>
           <div class="help-row"><kbd>j</kbd> <span>Scroll down</span></div>
           <div class="help-row"><kbd>k</kbd> <span>Scroll up</span></div>
           <div class="help-row"><kbd>gg</kbd> <span>Go to top</span></div>
           <div class="help-row"><kbd>G</kbd> <span>Go to bottom</span></div>
           <div class="help-row"><kbd>Ctrl+d</kbd> <span>Half page down</span></div>
           <div class="help-row"><kbd>Ctrl+u</kbd> <span>Half page up</span></div>
+          <div class="help-row"><kbd>J</kbd> <span>Zoom out</span></div>
+          <div class="help-row"><kbd>K</kbd> <span>Zoom in</span></div>
         </div>
         <div class="help-section">
           <h3>Commands</h3>
           <div class="help-row"><kbd>:</kbd> <span>Command mode</span></div>
+          <div class="help-row"><kbd>/</kbd> <span>Search / History</span></div>
           <div class="help-row"><kbd>?</kbd> <span>Toggle help</span></div>
-          <div class="help-row"><kbd>Esc</kbd> <span>Exit mode</span></div>
-          <div class="help-row"><kbd>Ctrl+r</kbd> <span>Hard reload</span></div>
+          <div class="help-row"><kbd>Alt+t</kbd> <span>Theme picker</span></div>
+          <div class="help-row"><kbd>Alt+b</kbd> <span>Toggle bookmark</span></div>
+          <div class="help-row"><kbd>Alt+←</kbd> <span>Go back</span></div>
+          <div class="help-row"><kbd>Alt+→</kbd> <span>Go forward</span></div>
+        </div>
+        <div class="help-section">
+          <h3>Extra</h3>
           <div class="help-row"><kbd>yy</kbd> <span>Copy URL</span></div>
-          <div class="help-row"><kbd>Alt+t</kbd> <span>Cycle theme</span></div>
+          <div class="help-row"><kbd>p</kbd> <span>Paste URL</span></div>
+          <div class="help-row"><kbd>Ctrl+p</kbd> <span>Print</span></div>
+          <div class="help-row"><kbd>Ctrl+s</kbd> <span>Save as PDF</span></div>
+          <div class="help-row"><kbd>F5</kbd> <span>Reload</span></div>
+          <div class="help-row"><kbd>Esc</kbd> <span>Exit mode</span></div>
         </div>
       </div>
     </div>
@@ -120,7 +122,7 @@
     </div>
   </div>
 
-  <!-- Browser content -->
+  <!-- Browser content (start page) -->
   <div id="browser-container">
     <div id="start-page">
       <div id="start-logo">vybe</div>
@@ -129,11 +131,8 @@
         <input id="start-search-input" type="text" placeholder="Search or type URL..." autocomplete="off" spellcheck="false">
       </div>
       <div id="start-hints">
-        Press <kbd>o</kbd> to search · <kbd>?</kbd> for help · <kbd>Alt+t</kbd> for themes
+        <kbd>o</kbd> open URL · <kbd>?</kbd> help · <kbd>Alt+t</kbd> themes · <kbd>Alt+b</kbd> bookmark
       </div>
-    </div>
-    <div id="browser-frame-wrapper" class="hidden">
-      <webview id="browser-webview" autosize="on" partition="persist:main"></webview>
     </div>
   </div>
 
