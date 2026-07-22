@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vybe — Keyboard-Driven Browser</title>
+  <title>Vybe — Full-Featured Browser</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -701,23 +701,23 @@
     <h1>
       <span class="glitch" data-text="vybe">vybe</span>
     </h1>
-    <p class="hero-sub">
-      <span class="accent">keyboard</span>-driven browsing
-    </p>
-    <div class="hero-cta">
-      <a href="download/Vybe-Setup-x64.exe" class="btn-download" download>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-          <polyline points="7 10 12 15 17 10"/>
-          <line x1="12" y1="15" x2="12" y2="3"/>
-        </svg>
-        Download v1.0.0
-      </a>
-      <a href="https://github.com/IlyaSigma111/vybe-browser" class="btn-secondary">
-        Source Code
-      </a>
-    </div>
-    <p class="hero-version">Windows x64 · 48 MB · Free</p>
+      <p class="hero-sub">
+        <span class="accent">full-featured</span> browser
+      </p>
+      <div class="hero-cta">
+        <a href="download/Vybe-Setup-x64.exe" class="btn-download" download>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Download v1.0.0
+        </a>
+        <a href="https://github.com/IlyaSigma111/vybe-browser" class="btn-secondary">
+          Source Code
+        </a>
+      </div>
+      <p class="hero-version">Windows x64 · 52 MB · Free</p>
   </section>
 
   <!-- FEATURES -->
@@ -729,32 +729,47 @@
         <div class="feature-card reveal">
           <div class="feature-icon">&gt;_</div>
           <h3 class="feature-title">Vim Keybindings</h3>
-          <p class="feature-desc">Navigate the web without touching your mouse. j/k to scroll, gg/G to jump, o to open URLs.</p>
-        </div>
-        <div class="feature-card reveal">
-          <div class="feature-icon">[]</div>
-          <h3 class="feature-title">Command Mode</h3>
-          <p class="feature-desc">Press : to enter command mode. Open tabs, reload pages, zoom — all from the keyboard.</p>
-        </div>
-        <div class="feature-card reveal">
-          <div class="feature-icon">///</div>
-          <h3 class="feature-title">Instant Search</h3>
-          <p class="feature-desc">Press / to search. Type your query and hit enter. No need to reach for the mouse.</p>
+          <p class="feature-desc">Navigate the web without touching your mouse. j/k to scroll, gg/G to jump, h/l for back/forward.</p>
         </div>
         <div class="feature-card reveal">
           <div class="feature-icon">[ ]</div>
-          <h3 class="feature-title">Tab Management</h3>
-          <p class="feature-desc">t for new tab, q to close, J/K to switch. Number keys 1-9 for direct access.</p>
+          <h3 class="feature-title">Chrome Extensions</h3>
+          <p class="feature-desc">Install any Chrome extension from a folder. Full extension support powered by Electron's Chromium.</p>
         </div>
         <div class="feature-card reveal">
-          <div class="feature-icon">// </div>
-          <h3 class="feature-title">Trapezoid Tabs</h3>
-          <p class="feature-desc">Classic Chrome-style trapezoid tabs. Because some designs never go out of style.</p>
+          <div class="feature-icon">///</div>
+          <h3 class="feature-title">Ctrl+F Search</h3>
+          <p class="feature-desc">Press Ctrl+F or / to find in page. Navigate results with Enter/Shift+Enter. Count shown live.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon">📥</div>
+          <h3 class="feature-title">Downloads</h3>
+          <p class="feature-desc">Full download manager with progress bar, save-to dialog, and completion notifications.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon">🎨</div>
+          <h3 class="feature-title">11 Terminal Themes</h3>
+          <p class="feature-desc">Dracula, Gruvbox, Nord, Catppuccin, Tokyo Night, Solarized, Monokai, Matrix, Rose Pine, Light, Dark. Alt+T to cycle.</p>
         </div>
         <div class="feature-card reveal">
           <div class="feature-icon">{ }</div>
-          <h3 class="feature-title">Tauri Powered</h3>
-          <p class="feature-desc">Built on Tauri for minimal resource usage. 48MB install, starts in milliseconds.</p>
+          <h3 class="feature-title">Electron Powered</h3>
+          <p class="feature-desc">Real Chromium browser engine. Full web compatibility, JavaScript, CSS3, WebGL — everything works.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon">⚙</div>
+          <h3 class="feature-title">Settings</h3>
+          <p class="feature-desc">Custom homepage, search engine, toggle JavaScript/images, smooth scrolling. All persisted locally.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon">🍪</div>
+          <h3 class="feature-title">Cookie Manager</h3>
+          <p class="feature-desc">View, inspect, and delete cookies. Clear all cookies with one click from the panel.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon">📋</div>
+          <h3 class="feature-title">History & Bookmarks</h3>
+          <p class="feature-desc">Full browsing history with search. Bookmarks bar, add/remove with Alt+B. All saved locally.</p>
         </div>
       </div>
     </div>
@@ -766,24 +781,28 @@
       <p class="section-label reveal">// keybinds</p>
       <h2 class="section-title reveal">Learn once. Type forever.</h2>
       <div class="keybinds-grid">
-        <div class="keybind-item reveal"><kbd>o</kbd><span class="keybind-desc">Open URL</span></div>
-        <div class="keybind-item reveal"><kbd>O</kbd><span class="keybind-desc">Open in new tab</span></div>
         <div class="keybind-item reveal"><kbd>j</kbd><span class="keybind-desc">Scroll down</span></div>
         <div class="keybind-item reveal"><kbd>k</kbd><span class="keybind-desc">Scroll up</span></div>
         <div class="keybind-item reveal"><kbd>h</kbd><span class="keybind-desc">Go back</span></div>
         <div class="keybind-item reveal"><kbd>l</kbd><span class="keybind-desc">Go forward</span></div>
         <div class="keybind-item reveal"><kbd>gg</kbd><span class="keybind-desc">Go to top</span></div>
         <div class="keybind-item reveal"><kbd>G</kbd><span class="keybind-desc">Go to bottom</span></div>
-        <div class="keybind-item reveal"><kbd>t</kbd><span class="keybind-desc">New tab</span></div>
-        <div class="keybind-item reveal"><kbd>q</kbd><span class="keybind-desc">Close tab</span></div>
-        <div class="keybind-item reveal"><kbd>J</kbd><span class="keybind-desc">Next tab</span></div>
-        <div class="keybind-item reveal"><kbd>K</kbd><span class="keybind-desc">Prev tab</span></div>
         <div class="keybind-item reveal"><kbd>r</kbd><span class="keybind-desc">Reload</span></div>
-        <div class="keybind-item reveal"><kbd>:</kbd><span class="keybind-desc">Command mode</span></div>
-        <div class="keybind-item reveal"><kbd>/</kbd><span class="keybind-desc">Search</span></div>
-        <div class="keybind-item reveal"><kbd>?</kbd><span class="keybind-desc">Help</span></div>
+        <div class="keybind-item reveal"><kbd>/</kbd><span class="keybind-desc">Find in page</span></div>
+        <div class="keybind-item reveal"><kbd>:</kbd><span class="keybind-desc">Command palette</span></div>
         <div class="keybind-item reveal"><kbd>yy</kbd><span class="keybind-desc">Copy URL</span></div>
-        <div class="keybind-item reveal"><kbd>Esc</kbd><span class="keybind-desc">Exit mode</span></div>
+        <div class="keybind-item reveal"><kbd>Alt+T</kbd><span class="keybind-desc">Cycle theme</span></div>
+        <div class="keybind-item reveal"><kbd>Alt+B</kbd><span class="keybind-desc">Toggle bookmark</span></div>
+        <div class="keybind-item reveal"><kbd>Ctrl+F</kbd><span class="keybind-desc">Find in page</span></div>
+        <div class="keybind-item reveal"><kbd>Ctrl+L</kbd><span class="keybind-desc">Focus URL bar</span></div>
+        <div class="keybind-item reveal"><kbd>Ctrl+P</kbd><span class="keybind-desc">Print page</span></div>
+        <div class="keybind-item reveal"><kbd>Ctrl+S</kbd><span class="keybind-desc">Save page</span></div>
+        <div class="keybind-item reveal"><kbd>F5</kbd><span class="keybind-desc">Reload</span></div>
+        <div class="keybind-item reveal"><kbd>F12</kbd><span class="keybind-desc">DevTools</span></div>
+        <div class="keybind-item reveal"><kbd>Ctrl++</kbd><span class="keybind-desc">Zoom in</span></div>
+        <div class="keybind-item reveal"><kbd>Ctrl+-</kbd><span class="keybind-desc">Zoom out</span></div>
+        <div class="keybind-item reveal"><kbd>Ctrl+Space</kbd><span class="keybind-desc">Command palette</span></div>
+        <div class="keybind-item reveal"><kbd>Esc</kbd><span class="keybind-desc">Close panel/find</span></div>
       </div>
     </div>
   </section>
@@ -801,13 +820,13 @@
           <span class="terminal-title">vybe — powershell</span>
         </div>
         <div class="terminal-body">
-          <div class="line" style="animation-delay: 0.1s"><span class="prompt">PS C:\Users\you&gt;</span> <span class="cmd">vybe</span></div>
+          <div class="line" style="animation-delay: 0.1s"><span class="prompt">PS C:\Users\you&gt;</span> <span class="cmd">npm start</span></div>
           <div class="line" style="animation-delay: 0.4s"><span class="comment">// Vybe Browser v1.0.0 starts...</span></div>
-          <div class="line" style="animation-delay: 0.7s"><span class="comment">// Press</span> <span class="highlight">o</span> <span class="comment">to open a URL</span></div>
-          <div class="line" style="animation-delay: 1.0s"><span class="comment">// Press</span> <span class="highlight">?</span> <span class="comment">for help</span></div>
-          <div class="line" style="animation-delay: 1.3s"><span class="comment">// Press</span> <span class="highlight">:</span> <span class="comment">for commands</span></div>
+          <div class="line" style="animation-delay: 0.7s"><span class="comment">// Press</span> <span class="highlight">Ctrl+L</span> <span class="comment">to focus URL bar</span></div>
+          <div class="line" style="animation-delay: 1.0s"><span class="comment">// Press</span> <span class="highlight">Ctrl+Space</span> <span class="comment">for command palette</span></div>
+          <div class="line" style="animation-delay: 1.3s"><span class="comment">// Press</span> <span class="highlight">Alt+T</span> <span class="comment">to cycle themes</span></div>
           <div class="line" style="animation-delay: 1.6s"></div>
-          <div class="line" style="animation-delay: 1.8s"><span class="prompt">:</span><span class="cmd">open github.com</span><span class="cursor"></span></div>
+          <div class="line" style="animation-delay: 1.8s"><span class="prompt">></span><span class="cmd"> https://github.com</span><span class="cursor"></span></div>
         </div>
       </div>
     </div>
@@ -832,7 +851,7 @@
   <!-- FOOTER -->
   <footer>
     <div class="container">
-      <p>vybe v1.0.0 · built with <a href="https://tauri.app">tauri</a> · <a href="https://github.com/IlyaSigma111/vybe-browser">github</a></p>
+      <p>vybe v1.0.0 · built with <a href="https://electronjs.org">electron</a> · <a href="https://github.com/IlyaSigma111/vybe-browser">github</a></p>
     </div>
   </footer>
 
