@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vybe — Keyboard-Driven Browser</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════ */
+    /*  RESET & VARS                          */
+    /* ═══════════════════════════════════════ */
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #050508;
+      --bg-card: #0a0a12;
+      --bg-elevated: #0f0f1a;
+      --border: #1a1a2e;
+      --border-glow: rgba(0, 255, 65, 0.15);
+      --green: #00ff41;
+      --green-dim: #00cc33;
+      --green-glow: rgba(0, 255, 65, 0.4);
+      --green-soft: rgba(0, 255, 65, 0.08);
+      --cyan: #00e5ff;
+      --purple: #b24dff;
+      --text: #c8c8d4;
+      --text-muted: #5a5a72;
+      --text-bright: #e8e8f0;
+      --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+      --font-sans: 'Inter', -apple-system, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    ::selection {
+      background: var(--green);
+      color: #000;
+    }
+
+    /* ═══════════════════════════════════════ */
+    /*  SCANLINES OVERLAY                     */
+    /* ═══════════════════════════════════════ */
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.08) 2px,
+        rgba(0, 0, 0, 0.08) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ═══════════════════════════════════════ */
+    /*  NOISE BACKGROUND                      */
+    /* ═══════════════════════════════════════ */
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9998;
+    }
+
+    /* ═══════════════════════════════════════ */
+    /*  CONTAINER                             */
+    /* ═══════════════════════════════════════ */
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ═══════════════════════════════════════ */
+    /*  NAV                                   */
+    /* ═══════════════════════════════════════ */
+
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 16px 0;
+      background: rgba(5, 5, 8, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    nav .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-family: var(--font-mono);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--green);
+      text-decoration: none;
+      letter-spacing: 2px;
+      text-shadow: 0 0 20px var(--green-glow);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      transition: color 0.2s, text-shadow 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--green);
+      text-shadow: 0 0 10px var(--green-glow);
+    }
+
+    /* ═══════════════════════════════════════ */
+    /*  HERO                                  */
+    /* ═══════════════════════════════════════ */
+
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      padding-top: 80px;
+    }
+
+    .hero-terminal {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+      opacity: 0;
+      animation: fadeIn 0.6s 0.2s forwards;
+    }
+
+    .hero-terminal .prompt {
+      color: var(--green);
+    }
+
+    .hero-terminal .cmd {
+      color: var(--text-bright);
+    }
+
+    .hero h1 {
+      font-family: var(--font-mono);
+      font-size: clamp(48px, 10vw, 96px);
+      font-weight: 700;
+      color: var(--text-bright);
+      letter-spacing: -2px;
+      line-height: 1;
+      margin-bottom: 8px;
+      position: relative;
+    }
+
+    .hero h1 .glitch {
+      position: relative;
+      display: inline-block;
+    }
+
+    .hero h1 .glitch::before,
+    .hero h1 .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .hero h1 .glitch::before {
+      color: var(--cyan);
+      animation: glitch-1 3s infinite linear alternate-reverse;
+      clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+    }
+
+    .hero h1 .glitch::after {
+      color: var(--purple);
+      animation: glitch-2 2.5s infinite linear alternate-reverse;
+      clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+    }
+
+    .hero-sub {
+      font-family: var(--font-mono);
+      font-size: 16px;
+      color: var(--text-muted);
+      margin-bottom: 48px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fadeIn 0.6s 0.5s forwards;
+    }
+
+    .hero-sub .accent {
+      color: var(--green);
+      text-shadow: 0 0 10px var(--green-glow);
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      opacity: 0;
+      animation: fadeIn 0.6s 0.8s forwards;
+    }
+
+    .btn-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 32px;
+      background: var(--green);
+      color: #000;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .btn-download::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--green);
+      filter: blur(20px);
+      opacity: 0.3;
+      z-index: -1;
+      transition: opacity 0.2s;
+    }
+
+    .btn-download:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 40px var(--green-glow);
+    }
+
+    .btn-download:hover::before {
+      opacity: 0.5;
+    }
+
+    .btn-download svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      background: transparent;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--green);
+      color: var(--green);
+      box-shadow: 0 0 20px var(--green-soft);
+    }
+
+    .hero-version {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 20px;
+      opacity: 0;
+      animation: fadeIn 0.6s 1s forwards;
+    }
+
+    /* ═══════════════════════════════════════ */
+    /*  GRID BACKGROUND                       */
+    /* ═══════════════════════════════════════ */
+
+    .grid-bg {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0, 255, 65, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 65, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+      -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ═══════════════════════════════════════ */
+    /*  FEATURES                              */
+    /* ═══════════════════════════════════════ */
+
+    .features {
+      padding: 120px 0;
+    }
+
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--green);
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      margin-bottom: 12px;
+      text-shadow: 0 0 10px var(--green-glow);
+    }
+
+    .section-title {
+      font-family: var(--font-mono);
+      font-size: clamp(28px, 5vw, 40px);
+      font-weight: 700;
+      color: var(--text-bright);
+      margin-bottom: 60px;
+      letter-spacing: -1px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 32px;
+      position: relative;
+      transition: all 0.3s;
+      clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--green), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .feature-card:hover {
+      border-color: var(--border-glow);
+      background: var(--bg-elevated);
+    }
+
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+
+    .feature-icon {
+      font-family: var(--font-mono);
+      font-size: 24px;
+      color: var(--green);
+      margin-bottom: 16px;
+      text-shadow: 0 0 15px var(--green-glow);
+    }
+
+    .feature-title {
+      font-family: var(--font-mono);
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-bright);
+      margin-bottom: 8px;
+    }
+
+    .feature-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* ═══════════════════════════════════════ */
+    /*  KEYBINDS                              */
+    /* ═══════════════════════════════════════ */
+
+    .keybinds {
+      padding: 120px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .keybinds-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .keybind-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+
+    .keybind-item:hover {
+      border-color: var(--green);
+      background: var(--green-soft);
+    }
+
+    kbd {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--green);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 3px 8px;
+      min-width: 40px;
+      text-align: center;
+      text-shadow: 0 0 8px var(--green-glow);
+    }
+
+    .keybind-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* ═══════════════════════════════════════ */
+    /*  TERMINAL DEMO                         */
+    /* ═══════════════════════════════════════ */
+
+    .terminal-section {
+      padding: 120px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .terminal-window {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 0;
+      overflow: hidden;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .terminal-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .terminal-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .terminal-dot.red { background: #ff5f57; }
+    .terminal-dot.yellow { background: #ffbd2e; }
+    .terminal-dot.green { background: #28c840; }
+
+    .terminal-title {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-left: 8px;
+    }
+
+    .terminal-body {
+      padding: 20px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .terminal-body .line {
+      opacity: 0;
+      animation: typeLine 0.3s forwards;
+    }
+
+    .terminal-body .prompt { color: var(--green); }
+    .terminal-body .cmd { color: var(--text-bright); }
+    .terminal-body .comment { color: var(--text-muted); }
+    .terminal-body .string { color: var(--cyan); }
+    .terminal-body .highlight { color: var(--green); text-shadow: 0 0 8px var(--green-glow); }
+
+    /* ═══════════════════════════════════════ */
+    /*  CTA                                   */
+    /* ═══════════════════════════════════════ */
+
+    .cta {
+      padding: 160px 0;
+      text-align: center;
+      position: relative;
+    }
+
+    .cta::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, var(--green-soft), transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta h2 {
+      font-family: var(--font-mono);
+      font-size: clamp(32px, 6vw, 52px);
+      font-weight: 700;
+      color: var(--text-bright);
+      margin-bottom: 16px;
+      letter-spacing: -1px;
+      position: relative;
+    }
+
+    .cta p {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 40px;
+      letter-spacing: 2px;
+      position: relative;
+    }
+
+    .cta .btn-download {
+      position: relative;
+    }
+
+    /* ═══════════════════════════════════════ */
+    /*  FOOTER                                */
+    /* ═══════════════════════════════════════ */
+
+    footer {
+      padding: 40px 0;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+
+    footer p {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 2px;
+    }
+
+    footer a {
+      color: var(--green);
+      text-decoration: none;
+      transition: text-shadow 0.2s;
+    }
+
+    footer a:hover {
+      text-shadow: 0 0 10px var(--green-glow);
+    }
+
+    /* ═══════════════════════════════════════ */
+    /*  ANIMATIONS                            */
+    /* ═══════════════════════════════════════ */
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes glitch-1 {
+      0%, 95% { transform: translate(0); }
+      96% { transform: translate(-2px, 1px); }
+      97% { transform: translate(2px, -1px); }
+      98% { transform: translate(-1px, 2px); }
+      99% { transform: translate(1px, -2px); }
+      100% { transform: translate(0); }
+    }
+
+    @keyframes glitch-2 {
+      0%, 93% { transform: translate(0); }
+      94% { transform: translate(2px, -1px); }
+      95% { transform: translate(-2px, 1px); }
+      96% { transform: translate(1px, 2px); }
+      97% { transform: translate(-1px, -2px); }
+      100% { transform: translate(0); }
+    }
+
+    @keyframes typeLine {
+      from { opacity: 0; transform: translateX(-4px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 16px;
+      background: var(--green);
+      animation: blink 1s step-end infinite;
+      vertical-align: text-bottom;
+      margin-left: 2px;
+    }
+
+    /* ═══════════════════════════════════════ */
+    /*  SCROLL REVEAL                         */
+    /* ═══════════════════════════════════════ */
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s, transform 0.6s;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ═══════════════════════════════════════ */
+    /*  RESPONSIVE                            */
+    /* ═══════════════════════════════════════ */
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hero-cta { flex-direction: column; }
+      .features-grid { grid-template-columns: 1fr; }
+      .keybinds-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="container">
+      <a href="#" class="nav-logo">&gt; vybe_</a>
+      <ul class="nav-links">
+        <li><a href="#features">features</a></li>
+        <li><a href="#keybinds">keybinds</a></li>
+        <li><a href="#demo">demo</a></li>
+        <li><a href="#download">download</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="grid-bg"></div>
+    <div class="hero-terminal">
+      <span class="prompt">$</span> <span class="cmd">./vybe --version</span>
+    </div>
+    <h1>
+      <span class="glitch" data-text="vybe">vybe</span>
+    </h1>
+    <p class="hero-sub">
+      <span class="accent">keyboard</span>-driven browsing
+    </p>
+    <div class="hero-cta">
+      <a href="download/Vybe-Setup-x64.exe" class="btn-download" download>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Download v1.0.0
+      </a>
+      <a href="https://github.com/IlyaSigma111/vybe-browser" class="btn-secondary">
+        Source Code
+      </a>
+    </div>
+    <p class="hero-version">Windows x64 · 48 MB · Free</p>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features" id="features">
+    <div class="container">
+      <p class="section-label reveal">// features</p>
+      <h2 class="section-title reveal">Built for speed.<br>Crafted for control.</h2>
+      <div class="features-grid">
+        <div class="feature-card reveal">
+          <div class="feature-icon">&gt;_</div>
+          <h3 class="feature-title">Vim Keybindings</h3>
+          <p class="feature-desc">Navigate the web without touching your mouse. j/k to scroll, gg/G to jump, o to open URLs.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon">[]</div>
+          <h3 class="feature-title">Command Mode</h3>
+          <p class="feature-desc">Press : to enter command mode. Open tabs, reload pages, zoom — all from the keyboard.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon">///</div>
+          <h3 class="feature-title">Instant Search</h3>
+          <p class="feature-desc">Press / to search. Type your query and hit enter. No need to reach for the mouse.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon">[ ]</div>
+          <h3 class="feature-title">Tab Management</h3>
+          <p class="feature-desc">t for new tab, q to close, J/K to switch. Number keys 1-9 for direct access.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon">// </div>
+          <h3 class="feature-title">Trapezoid Tabs</h3>
+          <p class="feature-desc">Classic Chrome-style trapezoid tabs. Because some designs never go out of style.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon">{ }</div>
+          <h3 class="feature-title">Tauri Powered</h3>
+          <p class="feature-desc">Built on Tauri for minimal resource usage. 48MB install, starts in milliseconds.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KEYBINDS -->
+  <section class="keybinds" id="keybinds">
+    <div class="container">
+      <p class="section-label reveal">// keybinds</p>
+      <h2 class="section-title reveal">Learn once. Type forever.</h2>
+      <div class="keybinds-grid">
+        <div class="keybind-item reveal"><kbd>o</kbd><span class="keybind-desc">Open URL</span></div>
+        <div class="keybind-item reveal"><kbd>O</kbd><span class="keybind-desc">Open in new tab</span></div>
+        <div class="keybind-item reveal"><kbd>j</kbd><span class="keybind-desc">Scroll down</span></div>
+        <div class="keybind-item reveal"><kbd>k</kbd><span class="keybind-desc">Scroll up</span></div>
+        <div class="keybind-item reveal"><kbd>h</kbd><span class="keybind-desc">Go back</span></div>
+        <div class="keybind-item reveal"><kbd>l</kbd><span class="keybind-desc">Go forward</span></div>
+        <div class="keybind-item reveal"><kbd>gg</kbd><span class="keybind-desc">Go to top</span></div>
+        <div class="keybind-item reveal"><kbd>G</kbd><span class="keybind-desc">Go to bottom</span></div>
+        <div class="keybind-item reveal"><kbd>t</kbd><span class="keybind-desc">New tab</span></div>
+        <div class="keybind-item reveal"><kbd>q</kbd><span class="keybind-desc">Close tab</span></div>
+        <div class="keybind-item reveal"><kbd>J</kbd><span class="keybind-desc">Next tab</span></div>
+        <div class="keybind-item reveal"><kbd>K</kbd><span class="keybind-desc">Prev tab</span></div>
+        <div class="keybind-item reveal"><kbd>r</kbd><span class="keybind-desc">Reload</span></div>
+        <div class="keybind-item reveal"><kbd>:</kbd><span class="keybind-desc">Command mode</span></div>
+        <div class="keybind-item reveal"><kbd>/</kbd><span class="keybind-desc">Search</span></div>
+        <div class="keybind-item reveal"><kbd>?</kbd><span class="keybind-desc">Help</span></div>
+        <div class="keybind-item reveal"><kbd>yy</kbd><span class="keybind-desc">Copy URL</span></div>
+        <div class="keybind-item reveal"><kbd>Esc</kbd><span class="keybind-desc">Exit mode</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TERMINAL DEMO -->
+  <section class="terminal-section" id="demo">
+    <div class="container">
+      <p class="section-label reveal">// demo</p>
+      <h2 class="section-title reveal">See it in action.</h2>
+      <div class="terminal-window reveal">
+        <div class="terminal-header">
+          <div class="terminal-dot red"></div>
+          <div class="terminal-dot yellow"></div>
+          <div class="terminal-dot green"></div>
+          <span class="terminal-title">vybe — powershell</span>
+        </div>
+        <div class="terminal-body">
+          <div class="line" style="animation-delay: 0.1s"><span class="prompt">PS C:\Users\you&gt;</span> <span class="cmd">vybe</span></div>
+          <div class="line" style="animation-delay: 0.4s"><span class="comment">// Vybe Browser v1.0.0 starts...</span></div>
+          <div class="line" style="animation-delay: 0.7s"><span class="comment">// Press</span> <span class="highlight">o</span> <span class="comment">to open a URL</span></div>
+          <div class="line" style="animation-delay: 1.0s"><span class="comment">// Press</span> <span class="highlight">?</span> <span class="comment">for help</span></div>
+          <div class="line" style="animation-delay: 1.3s"><span class="comment">// Press</span> <span class="highlight">:</span> <span class="comment">for commands</span></div>
+          <div class="line" style="animation-delay: 1.6s"></div>
+          <div class="line" style="animation-delay: 1.8s"><span class="prompt">:</span><span class="cmd">open github.com</span><span class="cursor"></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta" id="download">
+    <div class="container">
+      <h2 class="reveal">Stop clicking.<br>Start typing.</h2>
+      <p class="reveal">vybe is free. no ads. no tracking.</p>
+      <a href="download/Vybe-Setup-x64.exe" class="btn-download reveal" download>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Download vybe
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <p>vybe v1.0.0 · built with <a href="https://tauri.app">tauri</a> · <a href="https://github.com/IlyaSigma111/vybe-browser">github</a></p>
+    </div>
+  </footer>
+
+  <!-- SCROLL REVEAL -->
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>
