@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src * data:; connect-src *; frame-src *;">
   <title>Vybe</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -77,7 +78,6 @@
           <div class="help-row"><kbd>h</kbd> <span>Go back</span></div>
           <div class="help-row"><kbd>l</kbd> <span>Go forward</span></div>
           <div class="help-row"><kbd>r</kbd> <span>Reload page</span></div>
-          <div class="help-row"><kbd>gi</kbd> <span>Focus URL bar</span></div>
         </div>
         <div class="help-section">
           <h3>Tabs</h3>
@@ -103,8 +103,20 @@
           <div class="help-row"><kbd>Esc</kbd> <span>Exit mode</span></div>
           <div class="help-row"><kbd>Ctrl+r</kbd> <span>Hard reload</span></div>
           <div class="help-row"><kbd>yy</kbd> <span>Copy URL</span></div>
+          <div class="help-row"><kbd>Alt+t</kbd> <span>Cycle theme</span></div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Theme picker -->
+  <div id="theme-overlay" class="hidden">
+    <div id="theme-box">
+      <div id="theme-header">
+        <span>Select Theme</span>
+        <button id="theme-close">✕</button>
+      </div>
+      <div id="theme-grid"></div>
     </div>
   </div>
 
@@ -117,11 +129,11 @@
         <input id="start-search-input" type="text" placeholder="Search or type URL..." autocomplete="off" spellcheck="false">
       </div>
       <div id="start-hints">
-        Press <kbd>o</kbd> to search · <kbd>?</kbd> for help · <kbd>:</kbd> for commands
+        Press <kbd>o</kbd> to search · <kbd>?</kbd> for help · <kbd>Alt+t</kbd> for themes
       </div>
     </div>
     <div id="browser-frame-wrapper" class="hidden">
-      <webview id="browser-webview" src="about:blank" partition="persist:main"></webview>
+      <webview id="browser-webview" autosize="on" partition="persist:main"></webview>
     </div>
   </div>
 
@@ -136,6 +148,7 @@
     </div>
   </div>
 
-  <script type="module" src="renderer.js"></script>
+  <script src="themes.js"></script>
+  <script src="renderer.js"></script>
 </body>
 </html>

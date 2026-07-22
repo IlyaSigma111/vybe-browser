@@ -1,13 +1,13 @@
 {
   "name": "vybe-browser",
   "version": "1.0.0",
+  "description": "Keyboard-driven browser with terminal themes",
+  "main": "src/main.js",
   "scripts": {
-    "tauri": "tauri"
+    "start": "electron .",
+    "dev": "electron . --dev"
   },
   "dependencies": {
-    "@tauri-apps/api": "^2"
-  },
-  "devDependencies": {
-    "@tauri-apps/cli": "^2"
+    "electron": "^33.0.0"
   }
 }
